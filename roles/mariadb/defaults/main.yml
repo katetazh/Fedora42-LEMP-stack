@@ -1,0 +1,11 @@
+--- 
+  
+
+mariadb_packages: 
+  - mariadb 
+  - mariadb-server-utils
+  - mariadb-client-utils 
+
+
+
+

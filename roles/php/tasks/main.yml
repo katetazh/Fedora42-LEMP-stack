@@ -1,0 +1,28 @@
+---
+
+  - name: Install Remi repository
+    dnf:
+      name: https://rpms.remirepo.net/fedora/remi-release-42.rpm
+      state: present
+      disable_gpg_check: true
+      update_cache: true
+
+
+  - name: Installing PHP packages. 
+    dnf: 
+      name: "{{ php_packages }}" 
+      state: latest 
+      update_cache: false
+
+
+
+  - name: Templating configs over 
+    template: 
+      src: "{{ item.src }}" 
+      dest: "{{ item.dest }}" 
+
+    loop: 
+
+      - { src: 'www.conf.j2', dest: '/etc/opt/remi/php83/php-fpm.d/www.conf' }
+      - { src: 'php-fpm.conf.j2', dest: '/etc/opt/remi/php83/php-fpm.conf' } 
+    notify: "start n enable php"

@@ -1,0 +1,73 @@
+--- 
+    - name: Installing packcages. 
+      dnf: 
+        name: "{{ mariadb_packages }}" 
+        state: latest
+        update_cache: false 
+
+
+    - name: Initializing mariadb database. 
+      command: "/usr/bin/mariadb-install-db --user=mysql --datadir=/var/lib/mysql --basedir=/usr "
+      args: 
+        creates: /var/lib/mysql
+
+
+    - name: Starting mariadb.
+      systemd:
+        name: mariadb 
+        state: started 
+        enabled: true
+
+
+
+
+    ###
+    # Remove every anonymous mysql user/account.
+    ###
+
+
+
+    - name: Removing all anonymous mysql accounts
+      community.mysql.mysql_user:
+        name: ''
+        host: localhost
+        state: absent
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+
+    ###
+    # TLDR; Delete every user that's called `root` which is not in localhost.
+    ###
+
+    - name: Disallow root login remotely
+      community.mysql.mysql_query:
+        login_user: root
+        login_unix_socket: /var/lib/mysql/mysql.sock
+        query: DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+
+
+    ###
+    # Remove the test database, not really needed on production environments.
+    ###
+
+    - name: Removing the test database...
+      community.mysql.mysql_db:
+        login_user: root
+        login_unix_socket: /var/lib/mysql/mysql.sock
+        name: test
+        state: absent
+
+
+
+    ###
+    # Reload the privilege tables.
+    ###
+
+    - name: Reload privilege tables
+      community.mysql.mysql_query:
+        login_user: root
+        login_unix_socket: /var/lib/mysql/mysql.sock
+        query: FLUSH PRIVILEGES;
+
+
+

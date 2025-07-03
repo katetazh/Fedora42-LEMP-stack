@@ -1,0 +1,13 @@
+--- 
+
+nginx_user: "nginx" 
+nginx_group: "nginx"
+
+server_name: "core2.local"
+site_docroot: "/var/www/wordpress"
+
+
+site_certificate: "/etc/ssl/certs/core2.crt"
+site_private_key: "/etc/ssl/private/core2.key" 
+
+fpm_socket: "/var/opt/remi/php83/run/php-fpm/www.sock"

@@ -1,0 +1,40 @@
+--- 
+
+  
+  - name: Creating docroot... 
+    file: 
+      path: "{{ wp_docroot }}" 
+      state: directory 
+      owner: "{{ nginx_user }}" 
+      group: "{{ nginx_group }}" 
+      mode: "0755" 
+
+
+  - name: Copying over static files...  
+    ansible.posix.synchronize: 
+      src: wordpress/ 
+      dest: "{{ wp_docroot }}"
+      rsync_opts:
+        - "--chown={{ nginx_user }}:{{ nginx_group }}"
+        - "--checksum"
+
+
+  - name: Creating new database... 
+    community.mysql.mysql_db: 
+      name: "{{ wp_db_name }}"
+      state: present 
+      login_unix_socket: /var/lib/mysql/mysql.sock
+
+  - name: Create a new database user to work with WordPress
+    community.mysql.mysql_user:
+      name: "{{ wp_db_user }}"
+      host: localhost
+      password: "{{ wp_db_user_password }}"
+      priv: "{{ wp_db_name }}.*:ALL"
+      state: present
+      login_unix_socket: /var/lib/mysql/mysql.sock
+
+  - name: Templating configs over... 
+    template: 
+      src: wp-config.php.j2 
+      dest: "{{ wp_docroot }}/wp-config.php" 

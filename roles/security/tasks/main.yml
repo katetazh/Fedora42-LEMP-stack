@@ -1,0 +1,16 @@
+---
+
+    - name: Whitelisting services...
+      ansible.posix.firewalld:
+       service: "{{ item }}"
+       state: enabled
+       permanent: true
+       immediate: true
+       offline: true
+
+      loop:
+        - "https"
+        - "http"
+        - "ssh"
+      notify: "reload firewall"
+

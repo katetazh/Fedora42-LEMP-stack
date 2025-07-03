@@ -1,0 +1,39 @@
+---
+
+    - name: start firewall
+      systemd:
+        name: firewalld
+        state: started
+
+    - name: stop firewall
+      systemd:
+        name: firewalld
+        state: stopped
+
+
+    - name: restart firewall
+      systemd:
+        name: firewalld
+        state: restarted
+
+
+
+    - name: reload firewall
+      systemd:
+        name: firewalld
+        state: reloaded
+
+
+
+    - name: start n enable
+      systemd:
+        name: firewalld
+        state: started
+        enabled: true
+
+
+    - name: stop n disable
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: false

@@ -1,0 +1,7 @@
+wp_db_name: "web101" 
+wp_db_user: "web101" 
+wp_db_user_password: "RandomSecurePassword Here It Is" 
+wp_docroot: "/var/www/wordpress/" 
+
+nginx_user: "nginx" 
+nginx_group: "nginx" 

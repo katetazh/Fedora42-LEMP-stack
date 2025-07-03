@@ -1,0 +1,54 @@
+server {
+
+
+    # Upgrade every HTTP connection to HTTPS  
+    listen 80;
+    server_name {{ server_name }}; 
+    return 301 https://$host$request_uri;
+}
+
+server {
+
+
+
+
+    listen 443 ssl;
+    server_name "{{ server_name }}";  
+
+
+
+    root {{ site_docroot }}; 
+    index index.php index.html index.htm ; 
+
+
+
+    ssl_certificate     {{ site_certificate }}; 
+    ssl_certificate_key {{ site_private_key }}; 
+
+
+
+
+    location / {
+        try_files $uri $uri/ index.php?$args; 
+    }
+
+
+
+
+    location ~* /cockpit {
+        return 301 http://$host:9090; 
+    }
+
+
+
+    location ~ \.php$ {
+        fastcgi_pass unix:{{ fpm_socket }}; 
+        include fastcgi.conf; 
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; 
+    }
+
+
+
+    access_log /var/log/nginx/{{ server_name }}.log; 
+}
+

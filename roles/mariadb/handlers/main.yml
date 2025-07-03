@@ -1,0 +1,27 @@
+--- 
+  - name: reload mariadb 
+    systemd: 
+      name: mariadb 
+      state: reloaded 
+
+  - name: start mariadb
+    systemd: 
+      name: mariadb 
+      state: restarted 
+
+  - name: stop mariadb 
+    systemd: 
+      name: mariadb 
+      state: stopped 
+
+  - name: start n enable 
+    systemd: 
+      name: mariadb 
+      state: started 
+      enabled: true
+  
+  - name: stop n disable 
+    systemd: 
+      name: mariadb 
+      state: stopped
+      enabled: true

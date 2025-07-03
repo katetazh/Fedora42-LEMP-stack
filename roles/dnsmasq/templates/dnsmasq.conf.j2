@@ -1,0 +1,43 @@
+user = "{{ dnsmasq_user }}"
+group = "{{ dnsmasq_group }}"
+
+interface = "{{ dnsmasq_interface }}"
+listen-address = "{{ dnsmasq_ip }}"
+port = "{{ dnsmasq_port }}"
+
+
+
+# Misc
+
+filterwin2k
+strict-order
+no-resolv
+bogus-priv
+stop-dns-rebind
+
+server = "{{ upstream_server }}"
+server = 9.9.9.9
+
+
+
+## DNS cache settings.
+
+max-ttl = 600
+max-cache-ttl = 3600
+min-cache-ttl = 360
+cache-size = 10000
+no-negcache
+
+
+
+# logging settings.
+
+log-queries  = extra
+log-facility = daemon
+log-async = 150
+
+
+
+# Concurrent conns.
+dns-forward-max = 1000
+

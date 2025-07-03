@@ -1,0 +1,32 @@
+--- 
+
+  - name: start n enable php 
+    systemd: 
+      name: php83-php-fpm 
+      state: started 
+      enabled: true 
+
+
+  - name: stop n disable php 
+    systemd: 
+      name: php83-php-fpm 
+      state: stopped 
+      enabled: false  
+
+
+  - name: start php 
+    systemd: 
+      name: php83-php-fpm 
+      state: started 
+
+
+  - name: stop php 
+    systemd:
+      name: php83-php-fpm 
+      state: stopped  
+
+
+  - name: reload php 
+    systemd: 
+      name: php83-php-fpm 
+      state: reloaded 

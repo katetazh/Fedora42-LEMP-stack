@@ -1,0 +1,71 @@
+--- 
+
+
+server_hostname: "core2.local"
+
+base_packages: 
+
+  - bat
+  - fastfetch
+  - firejail
+  - fzf
+  - git
+  - inxi
+  - jq
+  - lsd
+  - lsof
+  - mtr
+  - atop 
+  - net-tools
+  - parallel
+  - plocate
+  - ripgrep
+  - rsync
+  - vim
+  - unzip
+  - whois
+  - zoxide
+  - python3-cryptography
+  - python3-PyMySQL
+  - sysstat 
+  - strace
+
+
+
+purge_list: 
+  - NetworkManager-wifi
+  - NetworkManager-bluetooth
+  - adwaita-sans-fonts
+  - adwaita-mono-fonts
+  - alsa-sof-firmware
+  - bluez
+  - bluez-libs
+  - default-editor
+  - default-fonts-core-sans
+  - desktop-file-utils
+  - ed
+  - fedora-logos
+  - firewalld
+  - firewalld-filesystem
+  - fonts-filesystem
+  - google-noto-fonts-common
+  - google-noto-sans-mono-vf-fonts
+  - google-noto-sans-vf-fonts
+  - google-noto-serif-vf-fonts
+  - man-pages
+  - man-db
+  - nano
+  - nano-default-editor
+  - samba-client-libs
+  - samba-common-libs
+  - samba-common
+
+
+purge_services: 
+
+  - firewalld 
+
+
+
+scripts_path: "/root/.local/bin/"
+bash_libs: "/root/libs.d/"

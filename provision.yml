@@ -1,0 +1,43 @@
+--- 
+
+  - name: Setting Up fedora42 
+    become: true 
+    hosts: lemp 
+
+
+    pre_tasks: 
+
+    - name: Update DNF package cache
+      dnf:
+        update_cache: yes
+      register: cache_update
+      retries: 3
+      delay: 5
+      until: cache_update is success
+
+
+    - name: Upgrade all packages to the latest version
+      dnf:
+        name: '*'
+        state: latest
+        update_cache: no
+      register: package_upgrade
+      retries: 3
+      delay: 5
+      until: package_upgrade is success
+
+
+    - name: Clean up unused packages and cache
+      dnf:
+        autoremove: yes
+      when: package_upgrade.changed
+
+
+    roles: 
+      - role: common 
+      - role: mariadb
+      - role: nginx  
+      - role: php 
+      - role: wordpress 
+      - role: dnsmasq
+      - role: security

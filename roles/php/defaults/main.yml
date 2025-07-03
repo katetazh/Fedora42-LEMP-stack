@@ -1,0 +1,29 @@
+--- 
+
+fpm_user: "nginx"
+fpm_group: "nginx" 
+fpm_listen_user: "nginx"  
+fpm_listen_group: "nginx"
+fpm_listen_perms: "0600" 
+fpm_listen_acl_user: "nginx" 
+fpm_socket: "/var/opt/remi/php83/run/php-fpm/www.sock" 
+fpm_pid: "/var/opt/remi/php83/run/php-fpm/php-fpm.pid" 
+fpm_config: "/etc/opt/remi/php83/php-fpm.conf"
+fpm_errlog: "/var/opt/remi/php83/log/php-fpm/error.log"
+
+
+
+
+php_packages: 
+  
+  - php83
+  - php83-php-cli
+  - php83-php-common
+  - php83-php-fpm
+  - php83-php-mbstring
+  - php83-php-mysqlnd
+  - php83-php-opcache
+  - php83-php-pdo
+  - php83-php-sodium
+  - php83-php-xml
+  - php83-runtime  

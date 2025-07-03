@@ -1,0 +1,79 @@
+--- 
+    - name: Installing packages. 
+      dnf: 
+        name: nginx 
+        state: latest 
+
+    - name: Creating directories for nginx 
+      file: 
+        path: /etc/nginx/vhosts.d/ 
+        mode: '0755' 
+        owner: 'root'
+        group: 'root' 
+        state: directory 
+
+      ###
+      # Won't work with relative paths.
+      ###
+    - name: Deploy core Nginx configuration templates
+      ansible.builtin.template:
+        src: "{{ item.file }}" 
+        dest: "/etc/nginx/{{ item.dest }}"
+        force: true
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+
+      loop:
+        - { file: 'fastcgi.conf.j2', dest: 'fastcgi.conf' }
+        - { file: 'fastcgi_params.j2', dest: 'fastcgi_params' }
+        - { file: 'koi-utf.j2', dest: 'koi-utf' }
+        - { file: 'koi-win.j2', dest: 'koi-win' }
+        - { file: 'mime.types.j2', dest: 'mime.types' }
+        - { file: 'scgi_params.j2', dest: 'scgi_params' }
+        - { file: 'uwsgi_params.j2', dest: 'uwsgi_params' }
+        - { file: 'win-utf.j2', dest: 'win-utf' }
+
+
+    - name: Deploying main config files... 
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+
+      loop: 
+        - { src: 'nginx.conf.j2', dest: '/etc/nginx/nginx.conf' }
+        - { src: 'conf.d/gzip.conf.j2', dest: '/etc/nginx/conf.d/gzip.conf' }
+        - { src: 'vhosts.d/site.conf.j2', dest: '/etc/nginx/vhosts.d/site.conf' }
+        - { src: 'conf.d/headers.conf.j2', dest: '/etc/nginx/conf.d/headers.conf' }
+
+
+
+    - name: Creating directory for priv keys.
+      ansible.builtin.file:
+        path: /etc/ssl/private/
+        state: directory
+        owner: 'root'
+        group: 'root'
+        mode: '0755'
+
+
+    - name: Generating a new RSA key.
+      community.crypto.openssl_privatekey:
+        path: "{{ site_private_key }}"
+        mode: '0600'
+        type: RSA
+        size: 4096
+
+
+    - name: Create simple self-signed certificate
+      community.crypto.x509_certificate:
+        path: "{{ site_certificate }}"
+        privatekey_path: "{{ site_private_key }}"
+        provider: selfsigned
+
+
+    - name: Starting nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: true

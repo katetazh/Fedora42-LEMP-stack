@@ -1,0 +1,25 @@
+#add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://apis.google.com; object-src 'none';";
+
+add_header X-Content-Type-Options "nosniff";
+
+add_header X-Frame-Options "DENY";
+
+add_header X-XSS-Protection "1; mode=block";
+
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+add_header Referrer-Policy "no-referrer";
+
+add_header Permissions-Policy "geolocation=(self), microphone=()";
+
+add_header Expect-CT "max-age=86400, enforce";
+
+add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+
+#add_header Content-Disposition "attachment; filename=\"filename.ext\"";
+
+add_header Access-Control-Allow-Origin "*";
+
+add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+
+add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept";

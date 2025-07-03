@@ -1,0 +1,6 @@
+# Only checks if the PID is not longer there.
+
+check process nginx with pidfile /run/nginx.pid 
+	stop program ="/usr/bin/systemctl stop nginx" 
+	start program ="/usr/bin/systemctl start nginx" 
+	if 5 restarts within 5 cycles then timeout 

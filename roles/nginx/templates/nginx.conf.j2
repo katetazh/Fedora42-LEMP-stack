@@ -1,0 +1,77 @@
+user "{{ nginx_user }}" "{{ nginx_group }}"; 
+
+worker_processes auto;  
+
+
+error_log /var/log/nginx/nginx.log crit; 
+
+worker_rlimit_nofile 100000;
+
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*; 
+
+
+
+events {
+    worker_connections  2048;
+    use epoll; 
+    multi_accept on ; 
+    accept_mutex on; 
+}
+
+
+
+http {
+
+
+    aio threads=default; 
+    http2 on; 
+    server_tokens off; 
+
+
+    include       mime.types;
+    default_type  application/octet-stream;
+
+
+
+    reset_timedout_connection on;
+    send_timeout 2;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log;
+
+    
+
+	types_hash_bucket_size 2048; 
+    types_hash_max_size 64; 
+
+	ignore_invalid_headers on; 
+
+
+    sendfile        on;
+    sendfile_max_chunk 512k; 
+    tcp_nopush     on;
+    tcp_nodelay off;
+    keepalive_timeout 60s; 
+
+
+    # Client body configuration. 
+    client_max_body_size 10M;
+    client_body_buffer_size 16k;
+    client_body_timeout 30s; 
+	client_body_in_file_only off;  
+	client_body_in_single_buffer off; 
+
+
+    # Request header configuration. 
+    client_header_buffer_size 2k;
+    client_header_timeout 20s;
+
+
+    include ./conf.d/*.conf;
+    include ./vhosts.d/*.conf ; 
+}
