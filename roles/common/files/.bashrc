@@ -1,16 +1,14 @@
+# // If shell is interactive, source the files.
 case $- in
 *i*) ;;
 *) return ;;
 esac
 
-if [[ -e /usr/bin/nvim && -x /usr/bin/nvim ]]; then
-  export EDITOR="nvim"
-fi
 
-if [[ -e /usr/bin/bat ]]; then
-  export BAT_THEME="1337"
-fi
+# // Selecting default editors.
 
+
+# // FZF themes.
 export FZF_DEFAULT_OPTS="  --multi \
   --highlight-line \
   --no-scrollbar \
@@ -22,7 +20,7 @@ export FZF_DEFAULT_OPTS="  --multi \
   --border=rounded \
   --no-scrollbar \
 "
-
+# // Shell options.
 shopt -s autocd
 shopt -s cdspell
 shopt -s histappend
@@ -31,13 +29,15 @@ shopt -s dotglob
 shopt -s checkhash
 shopt -s checkjobs
 
+# // fzf and starship
 eval "$(fzf --bash)"
 
 
-eval "$(starship init bash)"
+# // Sourcing libraries... 
 source "$HOME/libs.d/aliases.sh"
-
 source "$HOME/libs.d/functions.sh"
-source "$HOME/libs.d/colors.sh"
 
+
+
+# // Evaling code here since it needs to be last.
 eval "$(zoxide init bash)"

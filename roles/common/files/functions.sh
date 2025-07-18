@@ -1,6 +1,26 @@
 #!/usr/bin/env bash
 
 
+
+
+vm_reset(){
+  virsh snapshot-revert --domain core2 --snapshotname "ansible-readyy" || return 11 
+  virsh snapshot-revert --domain core1 --snapshotname "ansible-readyy" || return 12
+}
+
+
+
+vm_start(){
+
+
+  virsh start core1 || return 11 
+  virsh start core2 || return 12
+
+
+}
+
+
+
 ex() {
 
 	[[ $# -eq 0 ]] && {
@@ -32,6 +52,70 @@ ex() {
 	done
 }
 
+
+sys::pslogs(){
+ { while IFS= read -r pid ; do    echo -e  "\n\n Process: $( cat /proc/$pid/stat | awk '/\(.*\)/ { print $2 }') $( pslog $pid 2>/dev/null ) " ; done < <( ps faux | awk '{ print $2 }' | uniq ) ;} 2>/dev/null | grep -iB 1 'log path:' 
+}
+
+
+
+
+get_local_ip() {
+  # Start with the 'ip' command
+  if hash ip; then
+    ip -o -4 a show up | awk -F '[ /]' '/brd/{print $7}'
+    return "${?}"
+  # Failover to 'ifconfig'
+  elif hash ifconfig; then
+    ifconfig -a \
+      | awk -F ':' '/inet addr/{print $2}' \
+      | awk '{print $1}' \
+      | grep -v "127.0.0.1"
+    return "${?}"
+  fi
+
+  # If we get to this point, we hope that DNS is working
+  if hash nslookup; then
+    # Because nslookup exits with 0 even on failure, we test for failure first
+    if nslookup "$(hostname)" 2>&1 \
+         | grep -E "Server failed|SERVFAIL|can't find" >/dev/null 2>&1; then
+      printf '%s\n' "Could not determine the local IP address"
+      return 1
+    else
+      nslookup "$(hostname)" \
+        | awk -F ':' '/Address:/{gsub(/ /, "", $2); print $2}' \
+        | grep -v "#"
+      return "${?}"
+    fi
+  fi
+
+  # If we get to this point, return nothing but a failure code
+  return 1
+}
+
+
+
+
+
+
+
+D(){
+  if [[ -d $1 ]]; then
+    cd -P "$1"
+  elif [[ -e $1 ]]; then
+    cd -P "${1%/*?}"
+  else
+    mkdir -p "$1"
+    cd -P "$1"
+  fi
+}
+
+
+
+psgrep() {
+  [[ "${1:?Usage: psgrep [search term]}" ]]
+  ps auxf | grep -i "[${1:0:1}]${1:1}" | awk '{print $2}'
+}
 
 
 

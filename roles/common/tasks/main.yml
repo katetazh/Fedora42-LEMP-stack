@@ -1,37 +1,13 @@
 --- 
 
-    - name: Setting Hostname... 
+    - name: Setting up base system... 
       hostname: 
         name: "{{ server_hostname }}" 
         use: systemd
 
 
-    - name: Installing base packages... 
-      dnf: 
-        name: "{{ base_packages }}" 
-        state: present 
-        update_cache: false 
-        enablerepo: epel 
-      
-      register: package_install
-      retries: 3
-      delay: 5
-      until: package_install is success
-
-    - name: Setting up files/directories...
-      ansible.builtin.file:
-        path: " {{ scripts_path }} "
-        state: directory
-        owner: 'root'
-        group: 'root'
-        mode: '0755'
-
-    - name: Setting up bash libs.d directory...
-      ansible.builtin.file:
-        path: " {{ bash_libs }}"
-        state: directory
-        owner: 'root'
-        group: 'root'
-        mode: '0755'
-
-
+    - include_tasks: update.yml 
+    - include_tasks: pkgs.yml 
+    - include_tasks: bash_env.yml 
+    - include_tasks: sshd.yml 
+    - include_tasks: firewall.yml 
