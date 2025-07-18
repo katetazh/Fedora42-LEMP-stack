@@ -1,0 +1,14 @@
+--- 
+
+    - name: Installing base packages... 
+      dnf: 
+        name: "{{ base_packages }}" 
+        state: present 
+        update_cache: False 
+        enablerepo: epel 
+      
+      register: package_install
+      retries: 3
+      delay: 5
+      until: package_install is success
+

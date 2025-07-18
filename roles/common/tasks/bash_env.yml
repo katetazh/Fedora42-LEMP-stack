@@ -1,0 +1,32 @@
+--- 
+    - name: Setting up bash paths...  
+      ansible.builtin.file:
+        path: "/root/libs.d/" 
+        state: directory
+        owner: 'root'
+        group: 'root'
+        mode: '0755'
+
+    - name: Setting up bash libraries... 
+      ansible.builtin.file:
+        path: "/root/.local/bin/"
+        state: directory
+        owner: 'root'
+        group: 'root'
+        mode: '0755'
+
+    - name: deploying dotfiles... 
+      ansible.builtin.copy: 
+        src: "{{ item.src }}" 
+        dest: "{{ item.dest }}" 
+        owner: 'root' 
+        group: 'root' 
+        mode: '0644' 
+        force: True 
+
+      loop: 
+        - { src: '.bashrc', dest: '/root/.bashrc' }
+        - { src: 'aliases.sh', dest: '/root/libs.d/aliases.sh' }
+        - { src: 'functions.sh', dest: '/root/libs.d/functions.sh' }
+        - { src: 'cleanup_temp.sh', dest: '/root/.local/bin/cleanup_temp.sh' }
+        - { src: 'wrap.sh', dest: '/root/.local/bin/wrap' }

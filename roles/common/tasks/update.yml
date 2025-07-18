@@ -1,0 +1,26 @@
+--- 
+
+    - name: Updating DNF cache... 
+      dnf:
+        update_cache: true
+      register: cache_update
+      retries: 3
+      delay: 5
+      until: cache_update is success
+
+
+    - name: Upgrading packages... 
+      dnf:
+        name: '*'
+        state: latest
+        update_cache: false # is updated above 
+      register: package_upgrade
+      retries: 3
+      delay: 5
+      until: package_upgrade is success
+
+
+    - name: Cleaning up packages... 
+      dnf:
+        autoremove: true
+      when: package_upgrade.changed

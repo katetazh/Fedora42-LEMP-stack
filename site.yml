@@ -1,0 +1,18 @@
+--- 
+
+  - name: Setting Up fedora42 
+    become: True 
+    hosts: lemp 
+
+    roles: 
+      - common
+      - mariadb
+      - nginx
+      - php
+      - wordpress
+      - dnsmasq
+
+
+
+
+

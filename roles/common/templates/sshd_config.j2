@@ -1,0 +1,65 @@
+# Specify the protocol version (SSHv2 is more secure than SSHv1)
+Protocol 2
+
+# Listen only on specific interfaces (replace with your IP or leave as default)
+ListenAddress 0.0.0.0
+ListenAddress ::
+
+# Use a non-standard port to reduce automated attacks
+Port {{ ssh_port }}
+
+# Restrict root login to prevent unauthorized administrative access
+PermitRootLogin no
+
+
+# Enforce public key authentication for stronger security
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile	.ssh/authorized_keys
+
+# Disable weaker authentication methods
+ChallengeResponseAuthentication no
+UsePAM no
+
+# Limit allowed users or groups (replace with actual usernames or groups)
+AllowUsers maint 
+#AllowGroups sshusers
+
+# Set idle timeout to disconnect inactive sessions
+ClientAliveInterval 300
+ClientAliveCountMax 0
+
+# Disable X11 forwarding unless explicitly needed
+X11Forwarding no
+
+# Disable TCP forwarding unless required
+AllowTcpForwarding no
+
+# Enable strong ciphers, MACs, and key exchange algorithms
+Ciphers aes256-ctr,aes192-ctr,aes128-ctr
+MACs hmac-sha2-512,hmac-sha2-256
+KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256
+
+# Limit maximum authentication attempts to prevent brute-force attacks
+MaxAuthTries 3
+
+# Disable empty passwords
+PermitEmptyPasswords no
+
+# Log verbosely for better auditing
+LogLevel VERBOSE
+
+# Disable DNS lookups to prevent delays and potential vulnerabilities
+UseDNS no
+
+# Restrict SSH to IPv4 and IPv6 explicitly (optional, based on your network)
+AddressFamily any
+
+# Enable privilege separation for better process isolation
+UsePrivilegeSeparation sandbox
+
+# Set a banner for legal warnings (optional)
+Banner /etc/ssh/sshd_banner
+
+# Restart SSH service after changes
+# sudo systemctl restart sshd

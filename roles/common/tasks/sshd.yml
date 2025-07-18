@@ -1,0 +1,11 @@
+--- 
+
+  - name: Hardening openSSH server... 
+    template: 
+      src: "sshd_config.j2" 
+      dest: "/etc/ssh/sshd_config" 
+      force: "true" 
+      owner: 'root' 
+      group: 'root' 
+      mode: "0600"
+    notify: "reload sshd" 
