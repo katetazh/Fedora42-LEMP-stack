@@ -9,7 +9,7 @@
 
     - name: Update DNF package cache
       dnf:
-        update_cache: yes
+        update_cache: true
       register: cache_update
       retries: 3
       delay: 5
@@ -20,7 +20,7 @@
       dnf:
         name: '*'
         state: latest
-        update_cache: no
+        update_cache: false
       register: package_upgrade
       retries: 3
       delay: 5
@@ -29,15 +29,21 @@
 
     - name: Clean up unused packages and cache
       dnf:
-        autoremove: yes
+        autoremove: true
       when: package_upgrade.changed
 
 
     roles: 
-      - role: common 
-      - role: mariadb
-      - role: nginx  
-      - role: php 
-      - role: wordpress 
-      - role: dnsmasq
-      - role: security
+      - common
+      - mariadb
+      - nginx
+      - php
+      - wordpress
+      - dnsmasq
+      - security
+
+
+
+
+
+
