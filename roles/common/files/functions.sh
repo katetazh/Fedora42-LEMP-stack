@@ -1,26 +1,6 @@
 #!/usr/bin/env bash
 
 
-
-
-vm_reset(){
-  virsh snapshot-revert --domain core2 --snapshotname "ansible-readyy" || return 11 
-  virsh snapshot-revert --domain core1 --snapshotname "ansible-readyy" || return 12
-}
-
-
-
-vm_start(){
-
-
-  virsh start core1 || return 11 
-  virsh start core2 || return 12
-
-
-}
-
-
-
 ex() {
 
 	[[ $# -eq 0 ]] && {
@@ -118,27 +98,10 @@ psgrep() {
 }
 
 
-
-
-
-stooge(){
-  pattern="${*}"
-  rg -i "${pattern:-}" ~/Documents/leaks/ | bat -pP
-}
-
 ipInfo(){
   [[ -n "${@}" ]] && { 
   curl -s https://ipinfo.io/${1}/json | jq -r
 }
-}
-
-
-anichange() {
-	local animations_dir
-	animations_dir="$HOME/.config/hypr/animations"
-	local animation_name=$(ls "${animations_dir}" | fzf --prompt "Animations for hyprland: ")
-	local animation="${animations_dir}/${animation_name}"
-	cp "${animation}" "$HOME/.config/hypr/animations.conf" || (echo "Failed" && return 1)
 }
 
 function log::try_catch() {
@@ -386,14 +349,6 @@ stat::is_empty_dir(){
 	printf '%s\n' "${*}" >&2
 }
 
-
-
-misc::alachange(){
-  local -r base_path="/home/admin/.config/alacritty/themes/"
-  local -r config="${base_path}$( ls -1 ${base_path} | fzf )" 
-  [[ -n "${config}" ]] && cp "${config}" "/home/admin/.config/alacritty/alacritty.toml"
-}
-
 misc::noerr(){
   eval "${*}" 2>/dev/null
 }
@@ -449,11 +404,4 @@ text::trim_all() {
     set +f
 }
 
-mpg(){
-  man -S 1,8,9 -k . | awk '{print $1}' | fzf | while IFS= read -r line ;do 
-      [[ -n "${line}" ]] &&  {
-        man -Tpdf "${line}" | zathura - >/dev/null 2>&1 & 
-        disown 
-      }
-  done 
-}
+
