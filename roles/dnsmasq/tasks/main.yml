@@ -1,16 +1,6 @@
 --- 
 
-  - name: Installing dependencies... 
-    dnf: 
-      name: "{{ dnsmasq_packages }}" 
-      state: latest
-    register: dnsmasq_install  
-    retries: 3 
-    delay: 2 
-    until: dnsmasq_install is successful
-
-
-  - name: Deploying config files. 
+  - name: Deploying dnsmasq configurations... 
     template: 
       src: "{{ item.src }}"
       dest: "{{ item.dest }}" 
@@ -21,24 +11,19 @@
     loop: 
       - { src: 'dnsmasq.conf.j2', dest: '/etc/dnsmasq.conf' }
 
-  - name: Switching from systemd-resolved to NetworkManager 
+  - name: Disabling `systemd-resolved` ... 
     systemd: 
       name: systemd-resolved
       state: stopped 
       enabled: false 
 
 
-  - name: Setting up resolv.conf 
+  - name: Setting up resolv.conf... 
     template: 
       src: resolv.conf.j2 
       dest: /etc/resolv.conf
       owner: 'root'
       group: 'root'
-      mode: '0644'
-
-
-  - name: Starting dnsmasq...
-    systemd:
-        name: dnsmasq
-        state: started
-        enabled: true
+      mode: '0644'  
+    # // notify handler to perform `systemctl enable --now dnsmasq`. 
+    notify: "start n enable"

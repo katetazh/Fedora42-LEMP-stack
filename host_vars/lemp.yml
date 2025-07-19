@@ -17,9 +17,22 @@ ports_in:
   - 2222 
   - 22 
 
-ssh_port: "2222" 
+ssh_port: "22" 
 
 
 default_zone: "public" 
 default_policy: "DROP" 
+
+
+
+
+
+
+# // dnsmasq variables
+
+dnsmasq_user: "dnsmasq" 
+dnsmasq_group: "dnsmasq" 
+dnsmasq_interface: "lo" 
+dnsmasq_ip: "127.0.0.1" 
+dnsmasq_port: "53"
 

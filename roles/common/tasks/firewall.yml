@@ -1,16 +1,9 @@
 --- 
 
-- name: Set firewalld default zone to public
-  ansible.posix.firewalld:
-    zone: "{{ default_zone }}" 
-    state: enabled
-    permanent: true
-    immediate: true
-
-
-- name: Allow incoming https 
+- name: Allowing incoming web/ssh connections... 
   ansible.posix.firewalld:
     service: "{{ item }}" 
+    zone: "{{ default_zone }}" 
     state: enabled
     permanent: true
     immediate: true
@@ -22,21 +15,15 @@
 - name: Allowing incoming connections on MISC ports... 
   ansible.posix.firewalld: 
     port: "{{ item }}/tcp" 
+    zone: "{{ default_zone }}"
     state: enabled 
     permanent: true 
     immediate: true 
     offline: true 
 
   loop: "{{ ports_in }}" 
-
-- name: Reloading firewall... 
-  systemd: 
-    name: "firewalld" 
-    state: reloaded 
-    daemon_reload: True 
-
-
-
+  # // notifying handler to reload 
+  notify: "reload firewall" 
 
 
 

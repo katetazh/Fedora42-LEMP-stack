@@ -27,7 +27,7 @@ base_packages:
   - python3-PyMySQL
   - sysstat 
   - strace
-
+  - dnsmasq 
 
 # // packages to purge 
 purge_list: 
