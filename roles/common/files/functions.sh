@@ -1,39 +1,5 @@
 #!/usr/bin/env bash
 
-
-
-
-
-
-
-misc::addr(){
-	local arg ; 
-	arg="${1:-US}" 
-	curl -s -X GET https://api.testingbot.com/v1/free-tools/random-address?"${arg}" | jq -r
-}
-
-
-
-
-vm_reset(){
-  virsh snapshot-revert --domain core2 --snapshotname "ansible-readyy" || return 11 
-  virsh snapshot-revert --domain core1 --snapshotname "ansible-readyy" || return 12
-}
-
-
-vm_stop(){
-  virsh shutdown core1 || return 11 
-  virsh shutdown core2 || return 12 
-}
-
-
-vm_start(){
-  virsh start core1 || return 11 
-  virsh start core2 || return 12
-}
-
-
-
 ex() {
 
 	[[ $# -eq 0 ]] && {
@@ -70,9 +36,6 @@ sys::pslogs(){
  { while IFS= read -r pid ; do    echo -e  "\n\n Process: $( cat /proc/$pid/stat | awk '/\(.*\)/ { print $2 }') $( pslog $pid 2>/dev/null ) " ; done < <( ps faux | awk '{ print $2 }' | uniq ) ;} 2>/dev/null | grep -iB 1 'log path:' 
 }
 
-
-
-
 get_local_ip() {
   # Start with the 'ip' command
   if hash ip; then
@@ -107,11 +70,6 @@ get_local_ip() {
 }
 
 
-
-
-
-
-
 D(){
   if [[ -d $1 ]]; then
     cd -P "$1"
@@ -133,12 +91,6 @@ psgrep() {
 
 
 
-
-stooge(){
-  pattern="${*}"
-  rg -i "${pattern:-}" ~/Documents/leaks/ | bat -pP
-}
-
 ipInfo(){
   [[ -n "${@}" ]] && { 
   curl -s https://ipinfo.io/${1}/json | jq -r
@@ -146,13 +98,6 @@ ipInfo(){
 }
 
 
-anichange() {
-	local animations_dir
-	animations_dir="$HOME/.config/hypr/animations"
-	local animation_name=$(ls "${animations_dir}" | fzf --prompt "Animations for hyprland: ")
-	local animation="${animations_dir}/${animation_name}"
-	cp "${animation}" "$HOME/.config/hypr/animations.conf" || (echo "Failed" && return 1)
-}
 
 function log::try_catch() {
   local line="${LINENO:-}"
@@ -223,12 +168,6 @@ text::field(){
     awk -F "${2:- }" '{ print $'"${1:-1}"'}'
 }
 
-# // No need to fork out to a gnu util. 
-str::head(){
-    mapfile -tn "${2:-20}" line < "${1:-/dev/stdin}"
-    printf '%s\n' "${line[@]}" 
-
-}
 
 
 str::head(){
@@ -240,7 +179,6 @@ str::head(){
 
 
 
-# // Get the length of a string. 
 str::len(){
     if (( $# > 0 )) ; then 
             for x in "${@}" ; do 
@@ -264,18 +202,15 @@ text::trun(){
 }
 
 
-## reverse the case same as `tr a-z A-Z` 
 text::rev_case(){
   input="${1:-$(cat -)}" 
   echo -e "${input~~}\n"
 }
 
-## will rewrite them at one point IG
 text::lstrip() {
     printf '%s\n' "${1##$2}"
 }
 
-## will rewrite them at one point IG
 text::rstrip() {
     printf '%s\n' "${1%%$2}"
 }
@@ -298,7 +233,6 @@ text::toupper(){
   echo -e "${input^^}\n" 
 } 
 
-## split items to an array 
 text::split() {
   IFS=$'\n' read -d "" -ra arr <<<"${1//$2/$'\n'}"
   printf '%s\n' "${arr[@]}"
@@ -317,14 +251,12 @@ text::random_arr_element() {
     printf '%s\n' "${arr[RANDOM % $#]}"
 }
 
-# // Trim leading and trailing whitespaces.
 text::trimm() {
     : "${1#"${1%%[![:space:]]*}"}"
     : "${_%"${_##*[![:space:]]}"}"
     printf '%s\n' "$_"
 }
 
-# // Trim all occurrences of whitespaces. 
 text::trim_all() {
     set -f
     set -- $*
@@ -363,8 +295,6 @@ stat::get_latest(){
 }
 
 
-# // Function to sort files based on their timestamps. 
-# // Shell requires dotglob and nullglob to be set. 
 stat::get_sorted_new(){
   local files; files=(*)
   for ((i = 0; i < ${#files[@]}; i++)); do
@@ -382,8 +312,6 @@ for f in "${files[@]}"; do
 done
 }
 
-# // Check if a directory is empty or not. 
-# // Executing in a subshell to not fuck up the environment. 
 stat::is_empty_dir(){
   if ( shopt -s nullglob dotglob ; f=(*) ; (( ${#f[@]} ))) ; then 
       echo "Not empty!" 
@@ -394,30 +322,25 @@ stat::is_empty_dir(){
   fi 
 }
 
+
+# // to be used for visibility with $PS3 
 :() {
 	[[ ${1:--} != ::* ]] && return 0
 	printf '%s\n' "${*}" >&2
 }
 
-
-
-misc::alachange(){
-  local -r base_path="/home/admin/.config/alacritty/themes/"
-  local -r config="${base_path}$( ls -1 ${base_path} | fzf )" 
-  [[ -n "${config}" ]] && cp "${config}" "/home/admin/.config/alacritty/alacritty.toml"
-}
-
+# // wrap for no errors ( gimmick ) 
 misc::noerr(){
   eval "${*}" 2>/dev/null
 }
 
-
 ssh::start_agent(){
-  eval "$(ssh-agent)" 
-  ssh-add ~/.ssh/id_rsa
+  eval "$(ssh-agent -s )" 
+  ssh-add ~/.ssh/$1 
 }
 
 
+# // find and cat 
 file::fcat(){
   find . -type f -name "${@}" -print0 | xargs -0 -I {} sh -c '
   echo "${@}"
@@ -462,25 +385,6 @@ text::trim_all() {
     set +f
 }
 
-mpg(){
-  man -S 1,8,9 -k . | awk '{print $1}' | fzf | while IFS= read -r line ;do 
-      [[ -n "${line}" ]] &&  {
-        man -Tpdf "${line}" | zathura - >/dev/null 2>&1 & 
-        disown 
-      }
-  done 
-}
-#!/usr/bin/env bash
-
-# =============================================================================
-# MISC FUNCTIONS
-# =============================================================================
-
-misc::addr(){
-    local arg ; 
-    arg="${1:-US}" 
-    curl -s -X GET https://api.testingbot.com/v1/free-tools/random-address?"${arg}" | jq -r
-}
 
 misc::ssl_exp(){
     openssl s_client --connect "$1":"$2" 2>/dev/null | openssl x509 -noout -dates 
